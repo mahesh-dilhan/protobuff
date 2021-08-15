@@ -1,4 +1,4 @@
-package mysvc
+package protogrpc
 
 import "errors"
 
