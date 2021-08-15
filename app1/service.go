@@ -1,4 +1,4 @@
-package protogrpc
+package app1
 
 import "errors"
 

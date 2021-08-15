@@ -2,29 +2,29 @@ package main
 
 import (
 	"context"
-	"github.com/mahesh-dilhan/protogrpc"
-	mysvcgrpc "github.com/mahesh-dilhan/protogrpc/grpc"
+	"github.com/mahesh-dilhan/protogrpc/app1"
+	"github.com/mahesh-dilhan/protogrpc/app1/grpc"
 )
 
 // userServiceController implements the gRPC UserServiceServer interface.
 type userServiceController struct {
-	userService protogrpc.Service
+	userService app1.Service
 }
 
 // NewUserServiceController instantiates a new UserServiceServer.
-func NewUserServiceController(userService protogrpc.Service) mysvcgrpc.UserServiceServer {
+func NewUserServiceController(userService app1.Service) grpc.UserServiceServer {
 	return &userServiceController{
 		userService: userService,
 	}
 }
 
 // GetUsers calls the core service's GetUsers method and maps the result to a grpc service response.
-func (ctlr *userServiceController) GetUsers(ctx context.Context, req *mysvcgrpc.GetUsersRequest) (resp *mysvcgrpc.GetUsersResponse, err error) {
+func (ctlr *userServiceController) GetUsers(ctx context.Context, req *grpc.GetUsersRequest) (resp *grpc.GetUsersResponse, err error) {
 	resultMap, err := ctlr.userService.GetUsers(req.GetIds())
 	if err != nil {
 		return
 	}
-	resp = &mysvcgrpc.GetUsersResponse{}
+	resp = &grpc.GetUsersResponse{}
 	for _, u := range resultMap {
 		resp.Users = append(resp.Users, marshalUser(&u))
 	}
@@ -32,6 +32,6 @@ func (ctlr *userServiceController) GetUsers(ctx context.Context, req *mysvcgrpc.
 }
 
 // marshalUser marshals a business object User into a gRPC layer User.
-func marshalUser(u *protogrpc.User) *mysvcgrpc.User {
-	return &mysvcgrpc.User{Id: u.ID, Name: u.Name}
+func marshalUser(u *app1.User) *grpc.User {
+	return &grpc.User{Id: u.ID, Name: u.Name}
 }

@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/mahesh-dilhan/protogrpc"
-	mysvcgrpc "github.com/mahesh-dilhan/protogrpc/grpc"
+	"github.com/mahesh-dilhan/protogrpc/app1"
+	grpc2 "github.com/mahesh-dilhan/protogrpc/app1/grpc"
 	"google.golang.org/grpc"
 	"time"
 )
@@ -12,20 +12,20 @@ import (
 var defaultRequestTimeout = time.Second * 10
 
 type grpcService struct {
-	grpcClient mysvcgrpc.UserServiceClient
+	grpcClient grpc2.UserServiceClient
 }
 
 // NewGRPCService creates a new gRPC user service connection using the specified connection string.
-func NewGRPCService(connString string) (protogrpc.Service, error) {
+func NewGRPCService(connString string) (app1.Service, error) {
 	conn, err := grpc.Dial(connString, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
-	return &grpcService{grpcClient: mysvcgrpc.NewUserServiceClient(conn)}, nil
+	return &grpcService{grpcClient: grpc2.NewUserServiceClient(conn)}, nil
 }
-func (s *grpcService) GetUsers(ids []int64) (result map[int64]protogrpc.User, err error) {
-	result = map[int64]protogrpc.User{}
-	req := &mysvcgrpc.GetUsersRequest{
+func (s *grpcService) GetUsers(ids []int64) (result map[int64]app1.User, err error) {
+	result = map[int64]app1.User{}
+	req := &grpc2.GetUsersRequest{
 		Ids: ids,
 	}
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultRequestTimeout)
@@ -40,8 +40,8 @@ func (s *grpcService) GetUsers(ids []int64) (result map[int64]protogrpc.User, er
 	}
 	return
 }
-func (s *grpcService) GetUser(id int64) (result protogrpc.User, err error) {
-	req := &mysvcgrpc.GetUsersRequest{
+func (s *grpcService) GetUser(id int64) (result app1.User, err error) {
+	req := &grpc2.GetUsersRequest{
 		Ids: []int64{id},
 	}
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultRequestTimeout)
@@ -56,9 +56,9 @@ func (s *grpcService) GetUser(id int64) (result protogrpc.User, err error) {
 			return unmarshalUser(grpcUser), nil
 		}
 	}
-	return result, protogrpc.ErrNotFound
+	return result, app1.ErrNotFound
 }
-func unmarshalUser(grpcUser *mysvcgrpc.User) (result protogrpc.User) {
+func unmarshalUser(grpcUser *grpc2.User) (result app1.User) {
 	result.ID = grpcUser.Id
 	result.Name = grpcUser.Name
 	return
