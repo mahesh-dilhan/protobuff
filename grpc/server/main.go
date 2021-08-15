@@ -3,7 +3,6 @@ package main
 import (
 	protogrpccore "github.com/mahesh-dilhan/protogrpc/core"
 	protogrpcgrpc "github.com/mahesh-dilhan/protogrpc/grpc"
-	protogrpcgrpcservice "github.com/mahesh-dilhan/protogrpc/grpc/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"net"
@@ -14,7 +13,7 @@ func main() {
 	// configure our core service
 	userService := protogrpccore.NewService()
 	// configure our gRPC service controller
-	userServiceController := protogrpcgrpcservice.NewUserServiceController(userService)
+	userServiceController := NewUserServiceController(userService)
 	// start a gRPC server
 	server := grpc.NewServer()
 	protogrpcgrpc.RegisterUserServiceServer(server, userServiceController)

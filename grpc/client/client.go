@@ -1,7 +1,8 @@
-package client
+package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/mahesh-dilhan/protogrpc"
 	mysvcgrpc "github.com/mahesh-dilhan/protogrpc/grpc"
 	"google.golang.org/grpc"
@@ -61,4 +62,13 @@ func unmarshalUser(grpcUser *mysvcgrpc.User) (result protogrpc.User) {
 	result.ID = grpcUser.Id
 	result.Name = grpcUser.Name
 	return
+}
+
+func main() {
+	client, err := NewGRPCService("127.0.0.1:9000")
+	if err != nil {
+		fmt.Println("Error connecting")
+	}
+	fmt.Println(client)
+	fmt.Println(client.GetUser(1))
 }
